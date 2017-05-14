@@ -1,0 +1,78 @@
+package peanuttlexicalanalyzer;
+import static peanuttlexicalanalyzer.PeanuttToken.*;
+
+%%
+%class Lexer
+%type PeanuttToken
+%line
+%column
+
+inteiro = 0|[1-9][0-9]*
+brancos = [\n| |\t]
+palavra_reservada = "PeanutBeggin"|"String"|"int"|"float"|"Read"|"Write"|"PeanuttEnd"|"Start"|"End"
+string = [_|a-z|A-Z][a-z|A-Z|0-9|_]*
+caracter = [a-zA-Z]
+simbolo = ":"|"="|";"|"."|"!"|","|"("|")"|"*"|"+"|"-"|"/"
+
+%{
+public String lexeme;
+%}
+
+inicio_coment = \$
+fim_coment = \$
+nonfim_coment = [^$]
+comentario_texto = {nonfim_coment}*
+comentario = {inicio_coment}{comentario_texto}{fim_coment}
+sep_real = \,
+real = {inteiro}{sep_real}{inteiro}
+abre_mod = \(\(
+fecha_mod = \)\)
+sep_mod = \,
+corpo_mod = {inteiro}{sep_mod}{inteiro}
+padrao_mod = {abre_mod}{corpo_mod}{fecha_mod}
+citation_open = \"
+citation_end = \"
+nonfim_citation      = [^\"]
+citation_text = {nonfim_citation}*
+citation = {citation_open}{citation_text}{citation_end}
+
+
+%%
+
+"=" {return IGUAL;}
+""
+"+" {return SOMA;}
+"*" {return MULT;}
+"-" {return MENOS;}
+"/" {return DIV;}
+"!=" { return DIFF; }
+"<" { return LESSTHEN; }
+"<=" { return LESSTHENEQUALS; }
+">" { return GREATERTHEN; }
+">=" { return GREATERTHENEQUALS; }
+// "mod" {return MOD;}
+"if" {return IF;}
+"else" {return ELSE;}
+"switch" {return SWITCH;}
+"endif" {return ENDIF;}
+"then" {return THEN;}
+"while" {return WHILE;}
+"for" {return FOR;}
+"endfor" {return ENDFOR;}
+"true" {return BOOLEAN;}
+"false" {return BOOLEAN;}
+"'" { return SINGLEQUOTE; }
+\" {return DOUBLEQUOTE;}
+{inteiro} {lexeme=yytext(); return INTEIRO;}
+{palavra_reservada} {lexeme=yytext(); return PALAVRA_RESERVADA;}
+{caracter} {lexeme=yytext(); return CARACTER;}
+{string} {lexeme=yytext(); return STRING;}
+{simbolo} {lexeme=yytext(); return SIMBOLO;}
+{brancos} { /**/ }
+{padrao_mod} {lexeme=yytext(); return MODULO;}
+{real} {lexeme=yytext(); return REAL;}
+{citation} {lexeme=yytext(); return CITATION;}
+
+{comentario} { lexeme=yytext(); return COMENTARIO; }
+
+. {return ERROR;}

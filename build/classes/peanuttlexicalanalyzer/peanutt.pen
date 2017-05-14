@@ -1,0 +1,12 @@
+PeanuttBegin CalcularSalario;
+    int TempoEmAnos; 
+    float ValorSalario; 
+    Start 
+        if (TempoEmAnos > 10) Then 
+            ValorSalario := 100.00; 
+        else 
+            ValorSalario := ValorSalario * 2; 
+    endIf;
+
+    write("Processamento feito com sucesso")
+End.
