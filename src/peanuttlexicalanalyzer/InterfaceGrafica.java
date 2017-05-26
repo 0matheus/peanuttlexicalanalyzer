@@ -279,22 +279,58 @@ public class InterfaceGrafica extends javax.swing.JFrame {
                 case ERROR:
                     resultado = resultado + "Erro, Símbolo não encontrado\n";
                     break;
-                case INT:
+                case IGUAL:
+                case SOMA:
+                case MULT:
+                case MENOS:
+                case DIV:
                 case ID:
+                case INT:
+                case NAME:
+                case VALUE:
+                case LINE:
+                case COLUMN:
+                case IF:
+                case ELSE:
+                case SWITCH:
+                case ENDIF:
+                case THEN:
+                case WHILE:
+                case FOR:
+                case ENDFOR:
+                case INTEIRO:
                 case PALAVRA_RESERVADA:
                 case CARACTER:
                 case SIMBOLO:
-                    resultado = resultado + "TOKEN: " + token + " " + lexer.lexeme + "\n";
+                case REAL:
+                case STRING:
+                case MODULO:
+                case SINGLEQUOTE:
+                case DOUBLEQUOTE:
+                case SET_OF_CARACTERS:
+                case DIFF:
+                case LESSTHEN:
+                case LESSTHENEQUALS:
+                case GREATERTHEN:
+                case GREATERTHENEQUALS:
+                case BOOLEAN:
+                case SEPARATOR:
+                case OBLOCK:
+                case CBLOCK:
+                case CODE:
+                case END_CODE:
+                case RECEBE:
+                    resultado =  resultado + " TOKEN: " + token +" "+ lexer.lexeme + "\n";
                     break;
                 default:
-                    resultado = resultado + "TOKEN: " + token + "\n";
+                    resultado = resultado + " TOKEN: " + token + "\n";
             }
         }
     }
 
     private void escolherArquivo() {
         chooser = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Apenas arquivos .txt ", "txt");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Arquivos .pen ou .txt", "txt", "pen");
         chooser.setFileFilter(filter);
         int returnVal = chooser.showOpenDialog(null);
         if (returnVal == JFileChooser.APPROVE_OPTION) {

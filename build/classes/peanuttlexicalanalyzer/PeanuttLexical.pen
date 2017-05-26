@@ -1,5 +1,6 @@
 package peanuttlexicalanalyzer;
 import static peanuttlexicalanalyzer.PeanuttToken.*;
+import java_cup.runtime.*;
 
 %%
 %class Lexer
@@ -9,10 +10,10 @@ import static peanuttlexicalanalyzer.PeanuttToken.*;
 
 inteiro = 0|[1-9][0-9]*
 brancos = [\n| |\t]
-palavra_reservada = "PeanutBeggin"|"String"|"int"|"float"|"Read"|"Write"|"PeanuttEnd"|"Start"|"End"
-string = [_|a-z|A-Z][a-z|A-Z|0-9|_]*
+palavra_reservada = "String"|"int"|"float"|"Read"|"Write"|"Start"|"End"
+set_of_caracters = [_|a-z|A-Z][a-z|A-Z|0-9|_]*
 caracter = [a-zA-Z]
-simbolo = ":"|"="|";"|"."|"!"|","|"("|")"|"*"|"+"|"-"|"/"
+simbolo = ":"|"="|"."|"!"|","|"("|")"|"*"|"+"|"-"|"/"
 
 %{
 public String lexeme;
@@ -27,52 +28,59 @@ sep_real = \,
 real = {inteiro}{sep_real}{inteiro}
 abre_mod = \(\(
 fecha_mod = \)\)
-sep_mod = \,
+sep_mod = "**"
 corpo_mod = {inteiro}{sep_mod}{inteiro}
 padrao_mod = {abre_mod}{corpo_mod}{fecha_mod}
-citation_open = \"
-citation_end = \"
-nonfim_citation      = [^\"]
-citation_text = {nonfim_citation}*
-citation = {citation_open}{citation_text}{citation_end}
+string_open = \"
+string_end = \"
+nonfim_string      = [^\"]
+string_text = {nonfim_string}*
+string = {string_open}{string_text}{string_end}
 
 
 %%
 
-"=" {return IGUAL;}
-""
-"+" {return SOMA;}
-"*" {return MULT;}
-"-" {return MENOS;}
-"/" {return DIV;}
-"!=" { return DIFF; }
-"<" { return LESSTHEN; }
-"<=" { return LESSTHENEQUALS; }
-">" { return GREATERTHEN; }
-">=" { return GREATERTHENEQUALS; }
-// "mod" {return MOD;}
-"if" {return IF;}
-"else" {return ELSE;}
-"switch" {return SWITCH;}
-"endif" {return ENDIF;}
-"then" {return THEN;}
-"while" {return WHILE;}
-"for" {return FOR;}
-"endfor" {return ENDFOR;}
-"true" {return BOOLEAN;}
-"false" {return BOOLEAN;}
-"'" { return SINGLEQUOTE; }
-\" {return DOUBLEQUOTE;}
-{inteiro} {lexeme=yytext(); return INTEIRO;}
-{palavra_reservada} {lexeme=yytext(); return PALAVRA_RESERVADA;}
-{caracter} {lexeme=yytext(); return CARACTER;}
-{string} {lexeme=yytext(); return STRING;}
-{simbolo} {lexeme=yytext(); return SIMBOLO;}
+
+"PeanuttBeggin" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return CODE;}
+"PeanuttEnd" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return END_CODE;}
+":=" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return RECEBE;}
+"=" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return IGUAL;}
+"+" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return SOMA;}
+"*" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return MULT;}
+"-" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return MENOS;}
+"/" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return DIV;}
+"::" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return SEPARATOR;}
+";" {}
+"!=" { lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return DIFF; }
+"<" { lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return LESSTHEN; }
+"<=" { lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return LESSTHENEQUALS; }
+">" { lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return GREATERTHEN; }
+">=" { lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return GREATERTHENEQUALS; }
+// "mod" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return MOD;}
+"if" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return IF;}
+"else" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return ELSE;}
+"switch" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return SWITCH;}
+"endif" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return ENDIF;}
+"then" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return THEN;}
+"while" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return WHILE;}
+"for" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return FOR;}
+"endfor" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return ENDFOR;}
+"true" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return BOOLEAN;}
+"false" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return BOOLEAN;}
+"'" { lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return SINGLEQUOTE; }
+"{" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return OBLOCK;}
+"}" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return CBLOCK;}
+\" {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return DOUBLEQUOTE;}
+{inteiro} {lexeme = "line: "+yyline+" column: "+yycolumn+" "+yytext(); return INTEIRO;}
+{palavra_reservada} {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return PALAVRA_RESERVADA;}
+{caracter} {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return CARACTER;}
+{set_of_caracters} {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return SET_OF_CARACTERS;}
+{simbolo} {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return SIMBOLO;}
 {brancos} { /**/ }
-{padrao_mod} {lexeme=yytext(); return MODULO;}
-{real} {lexeme=yytext(); return REAL;}
-{citation} {lexeme=yytext(); return CITATION;}
+{padrao_mod} {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return MODULO;}
+{real} {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return REAL;}
+{string} {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return STRING;}
 
-{comentario} { lexeme=yytext(); return COMENTARIO; }
+{comentario} {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return COMENTARIO; }
 
-. {return ERROR;}
+. {lexeme =  yytext()+ " line "+yyline+" column "+yycolumn; return ERROR;}
